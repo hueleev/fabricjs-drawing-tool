@@ -20,7 +20,7 @@ canvas.setHeight(h);
 canvas.setWidth(w);
 
 function initCanvas(canvas) {
-    canvas.clear();
+    //canvas.clear();
     canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
     canvas.freeDrawingBrush.shadow = new fabric.Shadow({
         blur: 0,
@@ -106,24 +106,22 @@ function emitEvent() {
         h: h,
         data: json
     };
-    socket.emit('drawing', data);
+
+    socket.emit('drawing', { roomNumber: window.location.href.split("?")[1].split("=")[1], canvasJson: data });
 }
 
 
 $(function () {
 
-
     //Canvas init
     initCanvas(canvas).renderAll();
 
     //canvas events
-
     canvas.on('after:render', function() {
         if (! isLoadedFromJson) {
             emitEvent();
         }
         isLoadedFromJson = false;
-        console.log(canvas.toJSON());
     });
 
     //dynamically resize the canvas on window resize
@@ -226,12 +224,22 @@ $(function () {
         deleteObjects();
     });
 
-    canvas.renderAll();
+    $("#undo").on('click', function() {
+        var drawObjects = canvas.getObjects();
+        var undoObject = drawObjects[drawObjects.length-1];
+        canvas.remove(undoObject);
+        socket.emit('remove', window.location.href.split("?")[1].split("=")[1]);
+    })
+
+    //canvas.renderAll();
 
     //Sockets
     socket.emit('ready', "Page loaded");
+    socket.emit("joinRoom", window.location.href.split("?")[1].split("=")[1]);
 
-    socket.on('drawing', function (obj) {
+    socket.on('drawing', function (roomData) {
+        let obj = roomData.canvasJson;
+
         //set this flag, to disable infinite rendering loop
         isLoadedFromJson = true;
 

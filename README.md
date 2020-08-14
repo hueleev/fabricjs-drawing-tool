@@ -1,6 +1,7 @@
-# Fabric.js + Socket.io Drawing tool
+# Fabric.js + Socket.io Drawing tool (edit by hueleev)
 
 Drawing tool made using fabric.js and socket.io
+Also you can make a room and communicate with room members.
 
 [![Capture.png](https://s7.postimg.cc/7mytltqgb/Capture.png)](https://postimg.cc/image/qs22vl547/)
 

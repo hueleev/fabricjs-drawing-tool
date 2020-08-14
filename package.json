@@ -11,6 +11,7 @@
   "dependencies": {
     "express": "^4.16.3",
     "fabric": "^2.2.4",
-    "socket.io": "^2.1.1"
+    "socket.io": "^2.1.1",
+    "url": "^0.11.0"
   }
 }
