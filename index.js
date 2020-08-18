@@ -12,6 +12,7 @@ app.use('/image', express.static(__dirname + '/image'));
 
 var paramRoomNumber;
 var line_history = {};
+var room_img = {};
 
 app.get('/', function(req,res) {
     res.sendFile(__dirname + '/index.html');
@@ -33,7 +34,10 @@ io.on('connection', function (socket) {
             socket.emit('drawing', { roomNumber: paramRoomNumber, canvasJson: line_history[paramRoomNumber][i] });
         }
     }
-    
+
+    if (room_img[paramRoomNumber] !== undefined) {
+        socket.emit('changeImg', room_img[paramRoomNumber]);
+    }
     
     socket.on("joinRoom", function(roomNumber) {
         console.log(">>>>> join: ", roomNumber);
@@ -68,6 +72,17 @@ io.on('connection', function (socket) {
         if (line_history[roomNumber] !== undefined) {
             delete line_history[roomNumber][line_history.length - 1];
         }
+    })
+
+    socket.on('changeImg', function(imageData) {
+        var binaryData = imageData.binaryData;
+        var roomNumber = imageData.roomNumber;
+        if (room_img[roomNumber] === undefined) {
+            room_img[roomNumber] = "";
+        }
+        room_img[roomNumber] = binaryData;
+
+        socket.broadcast.to(roomNumber).emit('changeImg', binaryData);
     })
 });
 

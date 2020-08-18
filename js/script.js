@@ -9,6 +9,8 @@ let isLoadedFromJson = false;
 let div = $("#canvasWrapper");
 let $canvas = $("#c");
 
+let paramRoomNumber = window.location.href.split("?")[1].split("=")[1];
+
 //width and height of canvas's wrapper
 let w, h;
 w = div.width();
@@ -107,7 +109,7 @@ function emitEvent() {
         data: json
     };
 
-    socket.emit('drawing', { roomNumber: window.location.href.split("?")[1].split("=")[1], canvasJson: data });
+    socket.emit('drawing', { roomNumber: paramRoomNumber, canvasJson: data });
 }
 
 
@@ -123,7 +125,7 @@ $(function () {
         }
         isLoadedFromJson = false;
     });
-
+    
     //dynamically resize the canvas on window resize
     $(window)
         .on('resize', function () {
@@ -228,15 +230,15 @@ $(function () {
         var drawObjects = canvas.getObjects();
         var undoObject = drawObjects[drawObjects.length-1];
         canvas.remove(undoObject);
-        socket.emit('remove', window.location.href.split("?")[1].split("=")[1]);
+        socket.emit('remove', paramRoomNumber);
     })
 
     //canvas.renderAll();
 
     //Sockets
     socket.emit('ready', "Page loaded");
-    socket.emit("joinRoom", window.location.href.split("?")[1].split("=")[1]);
-
+    socket.emit("joinRoom", paramRoomNumber);
+    
     socket.on('drawing', function (roomData) {
         let obj = roomData.canvasJson;
 
@@ -257,4 +259,36 @@ $(function () {
         canvas.loadFromJSON(obj.data);
     });
 
+    socket.on('changeImg', function (binaryData) {
+        document.getElementById("canvasImg").src = binaryData;
+    });
+
+    var fileTarget = $('.file_box .file_hidden');
+
+    fileTarget.on('change', function (e) {
+        if (window.FileReader) {
+            // 파일명 추출
+            var filename = $(this)[0].files[0].name;
+        }
+        else {
+            // Old IE 파일명 추출
+            var filename = $(this).val().split('/').pop().split('\\').pop();
+        };
+
+        $(this).siblings('.upload_name').val(filename);
+
+        var fileReader = new FileReader();
+        fileReader.readAsDataURL(e.target.files[0]);
+
+        fileReader.onload = function (e) {
+            document.getElementById("canvasImg").src = e.target.result;
+            changeImg(e.target.result);
+        }
+    });
+
 });
+
+function changeImg(binaryData) {
+    var roomData = { roomNumber: paramRoomNumber, binaryData: binaryData };
+    socket.emit("changeImg", roomData);
+}

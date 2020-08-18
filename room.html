@@ -14,12 +14,16 @@
 </head>
 
 <body>
-
+    <div class="file_box">
+        <input class="upload_name" value="이미지를 업로드 해 주세요." disabled="disabled">
+        <label for="input_file"><img alt="파일 찾기"></label>
+        <input type="file" id="input_file" class="file_hidden">
+    </div>
     <div class="ui container" style="height: calc(100vh - 100px)">
         <div class="ui celled grid" style="height: calc(100vh - 100px);">
             <div class="fourteen wide column" style="height: calc(100vh - 100px);">
                 <div id="content" style="width: 100%; position: absolute; z-index: 1; top: 0; left: 0; right: 0;">
-                    <img style="width: 100%;" src="./image/dog.jpg" alt="" />
+                    <img id="canvasImg" style="max-width: 100%; max-height: calc(100vh - 100px)" src="./image/dog.jpg" alt="" />
                     <!--height: -webkit-fill-available; object-fit: contain;-->
                     <!-- <video style="width: 100%;" src="http://techslides.com/demos/sample-videos/small.mp4" controls autoplay="true"></video> -->
                 </div>
@@ -91,9 +95,6 @@
                     </div>
 
                 </div>
-
-
-
                 <div class="mt2">
                     <label>Debug</label>
                     <hr class="my0">
@@ -112,5 +113,78 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/script.js"></script>
 </body>
+
+<style>
+    .file_box {
+        position: relative;
+        margin-top: 30px;
+        font-size: 0;
+    }
+
+    .file_box input[type="file"] {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+    }
+
+    .file_box label {
+        display: inline-block;
+        line-height: 0;
+        margin-left: 5px;
+        margin-top: -3px;
+        color: #999;
+        vertical-align: middle;
+        background-color: #fff;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 400;
+        color: #0fb5bf;
+        text-align: center;
+        box-sizing: border-box;
+        background: #fff;
+    }
+
+    /* 파일 이름 */
+    .file_box .upload_name {
+        display: inline-block;
+        padding: 0 20px 0 50px;
+        width: calc(100% - 80px);
+        height: 40px;
+        line-height: 40px;
+        vertical-align: middle;
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        -webkit-appearance: none;
+        /* 네이티브 외형 감추기 */
+        -moz-appearance: none;
+        appearance: none;
+        font-size: 14px;
+        font-weight: 500;
+        color: #a8a8a8;
+        box-sizing: border-box;
+    }
+
+    /* 이미지 미리보기 */
+    .file_box .upload-display {
+        position: absolute;
+        left: 12px;
+        top: 9px;
+        width: 24px;
+        height: 24px;
+    }
+
+    .file_box .upload-display img {
+        display: block;
+        max-width: 100%;
+        width: 100% \9;
+        max-height: 100%;
+        ;
+    }
+</style>
 
 </html>
